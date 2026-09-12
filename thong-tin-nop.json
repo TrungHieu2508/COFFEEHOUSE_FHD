@@ -1,0 +1,38 @@
+{
+  "ho_ten": "Lê Trung Hiếu",
+  "lop": "Python44",
+  "de_tai": "de-01-quan-ca-phe",
+  "link_repo": "",
+  "link_api": "",
+  "tai_khoan": {
+    "quyen_cao": {
+      "ten_dang_nhap": "quanly",
+      "mat_khau": "quanly123"
+    },
+    "quyen_thap": {
+      "ten_dang_nhap": "nhanvien",
+      "mat_khau": "nhanvien123"
+    }
+  },
+  "endpoint": {
+    "danh_sach": "/mon",
+    "tao_moi": {
+      "duong_dan": "/mon",
+      "than": {
+        "ma_mon": "ZZ99",
+        "ten": "Mon thu",
+        "nhom": "Khac",
+        "gia": 15000
+      }
+    },
+    "xuat_csv": "/nhap-xuat/thuc-don.csv",
+    "nhap_csv": "/nhap-xuat/thuc-don.csv",
+    "thong_ke": "/thong-ke/doanh-thu"
+  },
+  "quy_tac_409": [
+    "Ban dang co hoa don mo thi khong mo hoa don thu hai",
+    "Hoa don da thanh toan thi khong them mon",
+    "Mon dang tat con_ban thi khong ban",
+    "Hoa don chua co mon nao thi khong thanh toan"
+  ]
+}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoffeeHouse - Sơ Đồ Bàn & Thực Đơn</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f8; color: #333; padding: 20px; }
+        h1 { text-align: center; margin-bottom: 20px; color: #4a2c2a; }
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card h2 { margin-bottom: 15px; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 8px; }
+        
+        /* CSS cho Sơ đồ bàn */
+        .grid-ban { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
+        .ban-item { padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; color: white; cursor: pointer; }
+        .co-khach { background-color: #e74c3c; } /* Màu đỏ: Bàn đang có khách */
+        .trong { background-color: #2ecc71; }    /* Màu xanh: Bàn trống */
+
+        /* CSS cho Thực đơn */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; }
+        .badge { padding: 3px 8px; border-radius: 12px; font-size: 0.8em; font-weight: normal; }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <h1>☕ CoffeeHouse Management Dashboard</h1>
+
+    <div class="container">
+        <!-- Cột 1: Sơ đồ bàn -->
+        <div class="card">
+            <h2>📌 Sơ Đồ Bàn Trực Tuyến</h2>
+            <div id="danh-sach-ban" class="grid-ban">
+                <p>Đang tải danh sách bàn...</p>
+            </div>
+        </div>
+
+        <!-- Cột 2: Thực đơn -->
+        <div class="card">
+            <h2>📜 Danh Sách Thực Đơn</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Tên món</th>
+                        <th>Nhóm</th>
+                        <th>Giá</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody id="danh-sach-mon">
+                    <tr><td colspan="5">Đang tải thực đơn...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Cấu hình URL backend API
+        const API_BASE_URL = "http://127.0.0.1:8000";
+
+        // 1. Tải danh sách thực đơn
+        async function loadThucDon() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/mon?gioi_han=50`);
+                if (!response.ok) throw new Error("Không thể tải danh sách món");
+                
+                const data = await response.json();
+                const tbody = document.getElementById("danh-sach-mon");
+                tbody.innerHTML = "";
+
+                data.forEach(item => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td><b>${item.ma_mon}</b></td>
+                        <td>${item.ten}</td>
+                        <td>${item.nhom}</td>
+                        <td>${item.gia.toLocaleString('vi-VN')} đ</td>
+                        <td>
+                            <span class="badge ${item.con_ban ? 'badge-success' : 'badge-danger'}">
+                                ${item.con_ban ? 'Còn bán' : 'Hết hàng'}
+                            </span>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                document.getElementById("danh-sach-mon").innerHTML = 
+                    `<tr><td colspan="5" style="color:red">Lỗi: ${error.message}</td></tr>`;
+            }
+        }
+
+        // 2. Tải danh sách bàn
+        async function loadDanhSachBan() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/hoa-don/ban`);;
+                if (!response.ok) throw new Error("Không thể tải sơ đồ bàn");
+                
+                const data = await response.json();
+                const grid = document.getElementById("danh-sach-ban");
+                grid.innerHTML = "";
+
+                data.forEach(ban => {
+                    const div = document.createElement("div");
+                    div.className = `ban-item ${ban.dang_co_khach ? 'co-khach' : 'trong'}`;
+                    div.innerHTML = `
+                        <div>Bàn ${ban.so_ban}</div>
+                        <small>${ban.dang_co_khach ? 'Có khách' : 'Trống'}</small>
+                    `;
+                    grid.appendChild(div);
+                });
+            } catch (error) {
+                document.getElementById("danh-sach-ban").innerHTML = 
+                    `<p style="color:red">Lỗi: ${error.message}</p>`;
+            }
+        }
+
+        // Khởi chạy khi load trang
+        window.onload = () => {
+            loadThucDon();
+            loadDanhSachBan();
+        };
+    </script>
+</body>
+</html>
