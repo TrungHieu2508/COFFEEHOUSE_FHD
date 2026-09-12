@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: fastapi-coffeehouse
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: CHUOI_KET_NOI
+        fromDatabase:
+          name: coffeehouse-db
+          property: connectionString
+      - key: KHOA_BI_MAT
+        generateValue: true
+      - key: SO_PHUT_HET_HAN
+        value: "60"
+      - key: TAO_DU_LIEU_MAU
+        value: "true"
+
+databases:
+  - name: coffeehouse-db
+    databaseName: coffeehouse
+    user: coffeehouse_user
