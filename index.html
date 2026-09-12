@@ -63,8 +63,10 @@
     </div>
 
     <script>
-        // Cấu hình URL backend API
-        const API_BASE_URL = "http://127.0.0.1:8000";
+        // Dùng window.location.origin để tự động lấy domain hiện tại (dù chạy local hay trên Render)
+        const API_BASE_URL = window.location.origin.includes("127.0.0.1") || window.location.origin.includes("localhost")
+        ? "http://127.0.0.1:8000"
+        : window.location.origin;
 
         // 1. Tải danh sách thực đơn
         async function loadThucDon() {
